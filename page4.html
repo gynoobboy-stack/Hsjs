@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>our story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="calm-bg">
+
+<div class="sky">
+  <span class="heart h1">❤</span>
+  <span class="heart h2">❤</span>
+  <span class="heart h3">❤</span>
+  <span class="heart h4">❤</span>
+  <span class="heart h5">❤</span>
+  <span class="heart h6">❤</span>
+</div>
+
+<main class="card story-card">
+  <h1 class="heading" id="storyHeading">click anywhere</h1>
+
+  <div class="story-screen" id="screen1">
+    <img src="story1.jpg" alt="our story, part 1" class="comic-photo">
+  </div>
+
+  <div class="story-screen" id="screen2" hidden>
+    <img src="story2.jpg" alt="our story, part 2" class="comic-photo">
+  </div>
+
+  <div class="story-screen" id="screen3" hidden>
+    <img src="story3.jpg" alt="our story, part 3" class="comic-photo">
+  </div>
+
+  <div class="story-screen" id="screen4" hidden>
+    <img src="story4.jpg" alt="our story, part 4" class="comic-photo">
+  </div>
+
+  <div class="story-screen" id="screen5" hidden>
+    <img src="story5.jpg" alt="our story, part 5" class="comic-photo">
+
+    <div class="time-buttons">
+      <button id="pastBtn" class="btn time-btn vintage-btn">past</button>
+      <button id="presentBtn" class="btn btn-no time-btn">present</button>
+      <button id="futureBtn" class="btn btn-yes time-btn">future</button>
+    </div>
+  </div>
+
+  <div class="story-screen" id="screen6" hidden>
+    <div class="photo-frame">
+      <img src="story6.jpg" alt="our story, part 6" class="comic-photo">
+      <div class="photo-overlay-message" id="loadingMessage" hidden>
+        <span id="loadingMessageText"></span>
+      </div>
+    </div>
+    <p class="subtext">traveling......to the past</p>
+
+    <div class="loading-wrap">
+      <div class="loading-track">
+        <div class="loading-fill" id="loadingFill"></div>
+        <div class="loading-icon" id="loadingIcon">🥟</div>
+      </div>
+      <p class="loading-percent" id="loadingPercent">0%</p>
+    </div>
+
+    <div class="hold-wrap">
+      <button id="holdBtn" class="hold-btn" aria-label="hold">🫴</button>
+      <div class="hold-bubble">hold my hand it's too risky</div>
+    </div>
+  </div>
+</main>
+
+<div class="time-popup time-popup-right" id="futurePopup" hidden>
+  <img src="time-popup.jpg" alt="" class="time-popup-photo">
+  <div class="chat-bubble">future time is not set yet</div>
+</div>
+
+<div class="time-popup time-popup-left" id="presentPopup" hidden>
+  <img src="time-popup.jpg" alt="" class="time-popup-photo">
+  <div class="chat-bubble">we are already in present</div>
+</div>
+
+<div class="time-transition" id="timeTransition" hidden></div>
+
+<script src="petals.js"></script>
+<script>
+  const screens = [
+    document.getElementById("screen1"),
+    document.getElementById("screen2"),
+    document.getElementById("screen3"),
+    document.getElementById("screen4"),
+    document.getElementById("screen5"),
+    document.getElementById("screen6"),
+  ];
+  const storyHeading = document.getElementById("storyHeading");
+  const futurePopup = document.getElementById("futurePopup");
+  const presentPopup = document.getElementById("presentPopup");
+
+  let current = 0;
+
+  function advanceScreen() {
+    if (current >= screens.length - 1) return;
+
+    screens[current].hidden = true;
+    current++;
+    screens[current].hidden = false;
+
+    if (current === screens.length - 1) {
+      storyHeading.hidden = true;
+    }
+  }
+
+  function showNext() {
+    // Screen5 (story5, index 4) is controlled entirely by the
+    // past/present/future buttons — a generic click should do nothing.
+    if (current === 4) return;
+    advanceScreen();
+  }
+
+  document.addEventListener("click", (e) => {
+    showNext();
+  });
+
+  document.getElementById("presentBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    futurePopup.hidden = true;
+    presentPopup.hidden = false;
+  });
+
+  document.getElementById("futureBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    presentPopup.hidden = true;
+    futurePopup.hidden = false;
+  });
+
+  const TIME_EMOJIS = ["⏰", "🕑", "⏳", "🕰️"];
+  const timeTransition = document.getElementById("timeTransition");
+
+  function playTimeTransition() {
+    timeTransition.innerHTML = "";
+    timeTransition.hidden = false;
+
+    const COUNT = 70;
+    for (let i = 0; i < COUNT; i++) {
+      const span = document.createElement("span");
+      span.className = "time-emoji";
+      span.textContent =
+        TIME_EMOJIS[Math.floor(Math.random() * TIME_EMOJIS.length)];
+      span.style.left = `${Math.random() * 100}%`;
+      span.style.fontSize = `${1.6 + Math.random() * 1.8}rem`;
+      span.style.animationDuration = `${1.6 + Math.random() * 1}s`;
+      span.style.animationDelay = `${Math.random() * 0.8}s`;
+      timeTransition.appendChild(span);
+    }
+
+    setTimeout(() => {
+      timeTransition.hidden = true;
+    }, 3000);
+  }
+
+  document.getElementById("pastBtn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    presentPopup.hidden = true;
+    futurePopup.hidden = true;
+    playTimeTransition();
+    advanceScreen();
+  });
+
+  // ---- Hold-to-load bar (screen6) ----
+  const holdBtn = document.getElementById("holdBtn");
+  const loadingFill = document.getElementById("loadingFill");
+  const loadingIcon = document.getElementById("loadingIcon");
+  const loadingPercent = document.getElementById("loadingPercent");
+  const loadingMessage = document.getElementById("loadingMessage");
+  const loadingMessageText = document.getElementById("loadingMessageText");
+
+  let holding = false;
+  let percent = 0;
+  let hasNavigated = false;
+
+  function startHold(e) {
+    e.preventDefault();
+    holding = true;
+  }
+  function endHold() {
+    holding = false;
+  }
+
+  holdBtn.addEventListener("mousedown", startHold);
+  holdBtn.addEventListener("touchstart", startHold, { passive: false });
+  holdBtn.addEventListener("mouseup", endHold);
+  holdBtn.addEventListener("mouseleave", endHold);
+  holdBtn.addEventListener("touchend", endHold);
+  holdBtn.addEventListener("touchcancel", endHold);
+  holdBtn.addEventListener("click", (e) => e.stopPropagation());
+
+  function updateLoadingDisplay() {
+    loadingFill.style.width = percent + "%";
+    loadingIcon.style.left = percent + "%";
+    loadingPercent.textContent = Math.round(percent) + "%";
+
+    if (percent >= 80) {
+      loadingMessageText.textContent = "we are almost there";
+      loadingMessage.hidden = false;
+    } else if (percent >= 50) {
+      loadingMessageText.textContent = "everything will be ok";
+      loadingMessage.hidden = false;
+    } else if (percent >= 25) {
+      loadingMessageText.textContent = "keep holding my hand";
+      loadingMessage.hidden = false;
+    } else {
+      loadingMessage.hidden = true;
+    }
+
+    if (percent >= 100 && !hasNavigated) {
+      hasNavigated = true;
+      setTimeout(() => {
+        window.location.href = "page5.html";
+      }, 400);
+    }
+  }
+
+  setInterval(() => {
+    if (current !== 5 || hasNavigated) return;
+    if (holding) {
+      percent = Math.min(100, percent + 0.625);
+    } else {
+      percent = Math.max(0, percent - 0.625);
+    }
+    updateLoadingDisplay();
+  }, 80);
+</script>
+</body>
+</html>

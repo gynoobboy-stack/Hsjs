@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="memory-bg">
+
+<div class="sky">
+  <span class="heart h1">♡</span>
+  <span class="heart h2">♡</span>
+  <span class="heart h3">♡</span>
+  <span class="heart h4">♡</span>
+  <span class="heart h5">♡</span>
+  <span class="heart h6">♡</span>
+</div>
+
+<main class="card gallery-card">
+  <div class="caption-chat order-prompt" id="galleryPrompt">
+    <img src="time-popup.jpg" alt="" class="caption-avatar">
+    <div class="chat-bubble caption-bubble">
+      <span>click each photos ♡</span>
+    </div>
+  </div>
+
+  <div class="gallery-photos" id="galleryPhotos"></div>
+
+  <div class="gallery-nav">
+    <button id="galleryBackBtn" class="btn gallery-back-btn">←</button>
+    <button id="galleryContinueBtn" class="btn btn-yes gallery-continue-btn">continue</button>
+  </div>
+</main>
+
+<div class="lightbox" id="lightbox" hidden>
+  <img id="lightboxImg" class="lightbox-img" src="" alt="">
+  <div class="caption-chat lightbox-chat">
+    <img src="time-popup.jpg" alt="" class="caption-avatar">
+    <div class="chat-bubble caption-bubble">
+      <span id="lightboxCaption"></span>
+    </div>
+  </div>
+  <button id="lightboxCloseBtn" class="btn btn-yes lightbox-close-btn">close</button>
+</div>
+
+<script>
+  // ---- Photo data (32 photos, grouped 3 at a time) ----
+  // Edit the text below to change each photo's caption.
+  // Position 1 = gallery1.jpg's caption, position 2 = gallery2.jpg's, and so on.
+  const captions = [
+    "This is the first photo that she ever send me.She probably didn't know how joyful i was when i saw this photo for the first time😚 cause i realized at that moment that i can see her everyday since i had her photo in my gallery. ", "BLACK AND WHITE photo🔲 , my girl looks like 90s girl with a very adorable face 😌",
+    "oh my girl, she really was obessed with cute filters 😆❤️, it was obviously normal for a 12 year girl<3", "AWWWW....❤️, another one, she was definetly taking those pictures just to send me after all.",
+    "SPIDER MAN !!!! 🕷️🕸️😆, NGL but she'll save me if i get bully :)", "Another childish cute filter of her😆 and also she is wearing red house t-shirt", 
+    "when she send me this one i was blushed a little(not just little). On top right one she wrinkled her left eye(CUTE >_<",
+    "Her expressions!! KILLED ME that day when shd send me this, i guess she found out i liked these multiple expressions typa photo of her (she is a little boss girl of mine anyway🫣)",
+    "she grew a lillte i think a year older since befofe in this photo. Just LOOK!! at her cheeks !! >_<, She is gazing at me like 'come lets have a kiss...'", 
+    "👍, SHE'S GORGEOUS ANYWAYS <3(I'm jealous of that cat sitting on her head :/)",
+    "A picture of her without glasses😌, i could easily see the beauty behind those lenses(how cute she really is...)"
+    , "When she sent me this i could only imagine that how adorable she was in her childhood(even though she's still a child afterall 😆) and now she became even more beautiful and i cant wait to see her becomming more beautiful in future. i can tell our daughter will be like her and i love it❤️",
+    "wooff !! wooff !!😆", 
+    "(she's in her school dress) i could tell that her eyes are calling me to come closer, please don't mind but she looks kinda hot 😶", 
+    "i can remember she asked me to suggest that which color of kurtha she will wear, since i was so bad at choosing i couldn't tell her which color she should pick but this white color matches her peace mind",
+    "same goes up with this also, but who's that guy took this pic tho 😒",
+    "when she send me this pic i wished that there would be mr holding her hand but i could only wish -_-",
+    "Human eyes are not capable to see angles so god send one in my life in a human form just so i can feel the beauty of her, even though its only for 3 years...", 
+    "dont look at me like that boss girl !! :(",
+    "Look it was winter time when she sent me this one, i can tell her expression made me feel warmth even though i'm far away from her :(",
+    "Even though her random selfie made me felt blush🫠", 
+    "LOOK!! Shs's wearing cultural dress along with multi expression photo yeppie!!(this was the reaction of mine when she sent me this as i remember", 
+    "This is the first photo of her without filter, her natural beauty is more than enough to make me fall on her, awww i......", 
+    "The first ever mirrror photo, she said she was going to palpa before sending me this photo, (i can tell that she is so sexy..along with hot, specially her waist 😶)",
+    "Anther mirror selfie, this white kurtha beautifully matches her vibe a lot🤍",
+    "LOOK!!! She's six how can i marry all of 6 of them 🫣", 
+    "Now she is...i mean she are 12 now:/, I'll marry all 12 of them 😆",
+    "Lets just pray that my daughter will be same cute like this , awww...<3",
+    "Got from shristi ,in this photo she's way too older than previous pictures but she's still 14😆", 
+    "She shouldn't hide her face like this :( anyways i wish i could tell her", 
+    "COM'ON she was hiding her face because of this ??😆, she shouldn't worry i would love her even if hef face was naturally like this 😁", 
+    "LOOK!! a red silinder is walking how ??? im gonna catch you",
+  ];
+
+  // Caption for the favorite photo (fav.jpg) - edit this
+  const FAV_CAPTION = "this is my favorite photo of all cause this is the moment when i hold your soft tiny hands, i still remember that not only hands but our soul was connected to eachother that time";
+
+  const PHOTO_COUNT = 32;
+  const GROUP_SIZE = 3;
+
+  const photos = [];
+  for (let i = 1; i <= PHOTO_COUNT; i++) {
+    photos.push({ src: `gallery${i}.jpg`, caption: captions[i - 1] });
+  }
+
+  const groups = [];
+  for (let i = 0; i < photos.length; i += GROUP_SIZE) {
+    groups.push(photos.slice(i, i + GROUP_SIZE));
+  }
+
+  const TOTAL_GROUPS = groups.length;
+
+  const galleryPhotos = document.getElementById("galleryPhotos");
+  const galleryContinueBtn = document.getElementById("galleryContinueBtn");
+  const galleryBackBtn = document.getElementById("galleryBackBtn");
+  const galleryPrompt = document.getElementById("galleryPrompt");
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightboxImg");
+  const lightboxCaption = document.getElementById("lightboxCaption");
+
+  let step = 0; // 0..TOTAL_GROUPS-1 = photo groups, TOTAL_GROUPS = fav.jpg screen
+
+  function openLightbox(src, caption) {
+    lightboxImg.src = src;
+    lightboxImg.alt = caption;
+    lightboxCaption.textContent = caption;
+    lightbox.hidden = false;
+    lightbox.classList.remove("closing");
+  }
+
+  function render() {
+    galleryPhotos.innerHTML = "";
+
+    // hide back button on the first screen
+    galleryBackBtn.style.visibility = step === 0 ? "hidden" : "visible";
+
+    if (step < TOTAL_GROUPS) {
+      galleryPrompt.style.display = "";
+
+      groups[step].forEach((photo) => {
+        const frame = document.createElement("div");
+        frame.className = "gallery-photo-frame";
+
+        const img = document.createElement("img");
+        img.src = photo.src;
+        img.alt = photo.caption;
+        img.className = "gallery-photo";
+
+        frame.appendChild(img);
+        galleryPhotos.appendChild(frame);
+
+        frame.addEventListener("click", () => openLightbox(photo.src, photo.caption));
+      });
+    } else {
+      // keep the "click each photos" bubble hidden on the fav screen
+      galleryPrompt.style.display = "none";
+
+      const wrap = document.createElement("div");
+      wrap.className = "featured-photo-wrap";
+
+      const img = document.createElement("img");
+      img.src = "fav.jpg";
+      img.alt = FAV_CAPTION;
+      img.className = "featured-photo";
+
+      wrap.appendChild(img);
+      galleryPhotos.appendChild(wrap);
+
+      // clicking the favorite photo opens it big, like the others
+      wrap.addEventListener("click", () => openLightbox("fav.jpg", FAV_CAPTION));
+    }
+  }
+
+  render();
+
+  galleryContinueBtn.addEventListener("click", () => {
+    if (step < TOTAL_GROUPS) {
+      step++;
+      render();
+    } else {
+      window.location.href = "page9.html";
+    }
+  });
+
+  galleryBackBtn.addEventListener("click", () => {
+    if (step > 0) {
+      step--;
+      render();
+    }
+  });
+
+  document.getElementById("lightboxCloseBtn").addEventListener("click", () => {
+    lightbox.classList.add("closing");
+    setTimeout(() => {
+      lightbox.hidden = true;
+    }, 300);
+  });
+</script>
+</body>
+</html>

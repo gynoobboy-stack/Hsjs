@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>let's order something</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="restaurant-bg">
+
+<main class="card restaurant-card">
+  <div class="caption-chat order-prompt">
+    <img src="time-popup.jpg" alt="" class="caption-avatar">
+    <div class="chat-bubble caption-bubble">
+      <span>♡</span>
+    </div>
+  </div>
+
+  <div class="food-menu" id="foodMenu"></div>
+
+  <div class="table-screen" id="tableScreen" hidden>
+    <div class="table-photo-wrap">
+      <img src="table.jpg" alt="the table" class="table-photo">
+      <img id="tableFoodImg" class="table-item table-item-food" alt="">
+      <img id="tableDrinkImg" class="table-item table-item-drink" alt="">
+      <img id="tableDessertImg" class="table-item table-item-dessert" alt="">
+    </div>
+
+    <div class="table-buttons">
+      <button class="btn btn-no table-action-btn" id="eatBtn">eat...</button>
+      <button class="btn btn-no table-action-btn" id="drinkBtn">drink...</button>
+      <button class="btn btn-no table-action-btn" id="dessertBtn">desert...</button>
+    </div>
+
+    <button class="btn btn-yes finish-btn" id="finishBtn" hidden>finish..</button>
+  </div>
+
+  <div class="table-screen" id="finishedScreen" hidden>
+    <img src="aftermeal.jpg" alt="" class="table-photo standalone-photo">
+    <div class="finished-buttons">
+      <button class="btn btn-no finished-btn" id="payBillBtn">I'll pay the bill</button>
+      <button class="btn btn-yes finished-btn" id="thanksBtn">thanks for the meal♡</button>
+    </div>
+  </div>
+
+  <div class="table-screen" id="answerScreen" hidden>
+    <img id="answerPhoto" src="" alt="" class="table-photo standalone-photo">
+    <button class="btn btn-yes answer-continue-btn" id="answerContinueBtn">continue</button>
+  </div>
+</main>
+
+<script>
+  // Each step lists its options. "next" points to the next step's key.
+  // "desserts" has no options yet — placeholder shown instead, per your
+  // instructions, until you tell me what goes there.
+  const menu = {
+    food: [
+      { photo: "momo.jpg", alt: "momo", desc: "Steamed dumplings, spiced filling, served with tomato chutney.", next: "drinks" },
+      { photo: "pizza.jpg", alt: "pizza", desc: "Cheesy, wood-fired, a little bit of everything on top.", next: "drinks" },
+      { photo: "chatpat.jpg", alt: "chatpat", desc: "Tangy, spicy street-style chatpat, mixed and ready to go.", next: "drinks" },
+    ],
+    drinks: [
+      { photo: "water.jpg", alt: "water", desc: "Still and simple.", next: "water" },
+      { photo: "coffee.jpg", alt: "coffee", desc: "Something to wake up to.", next: "coffee" },
+      { photo: "colddrink.jpg", alt: "cold drink", desc: "Fizzy and refreshing.", next: "colddrink" },
+    ],
+    water: [
+      { photo: "hot-water.jpg", alt: "hot water", desc: "Warm and soothing.", next: "desserts" },
+      { photo: "cold-water.jpg", alt: "cold water", desc: "Cool and crisp.", next: "desserts" },
+    ],
+    coffee: [
+      { photo: "cold-coffee.jpg", alt: "cold coffee", desc: "Iced and smooth.", next: "desserts" },
+      { photo: "hot-coffee.jpg", alt: "hot coffee", desc: "Rich and steaming.", next: "desserts" },
+    ],
+    colddrink: [
+      { photo: "coca-cola.jpg", alt: "coca-cola", desc: "The classic.", next: "desserts" },
+      { photo: "pepsi.jpg", alt: "pepsi", desc: "The other classic.", next: "desserts" },
+    ],
+    desserts: [
+      { photo: "louisas-cake.jpg", alt: "Louisa's Cake", desc: "Louisa's Cake", next: "table" },
+      { photo: "chocolate-bundt-cake.jpg", alt: "Chocolate Bundt Cake", desc: "Chocolate Bundt Cake", next: "table" },
+      { photo: "vanilla-mousse-cups.jpg", alt: "Easy Vanilla Mousse Cups", desc: "Easy Vanilla Mousse Cups", next: "table" },
+    ],
+  };
+
+  // Which "slot" each step's choice fills — used to place the right
+  // small photo on the table later.
+  const stepKind = {
+    food: "food",
+    water: "drink",
+    coffee: "drink",
+    colddrink: "drink",
+    desserts: "dessert",
+  };
+
+  const selected = { food: null, drink: null, dessert: null };
+
+  const foodMenu = document.getElementById("foodMenu");
+  const orderPrompt = document.querySelector(".order-prompt");
+
+  function renderStep(stepName) {
+    const options = menu[stepName];
+    foodMenu.hidden = false;
+    orderPrompt.hidden = false;
+    foodMenu.innerHTML = "";
+
+    options.forEach((opt) => {
+      const item = document.createElement("div");
+      item.className = "food-item";
+
+      const btn = document.createElement("button");
+      btn.className = "food-btn";
+      btn.addEventListener("click", () => {
+        const kind = stepKind[stepName];
+        if (kind) selected[kind] = opt.photo;
+
+        if (opt.next === "table") {
+          showTableScreen();
+        } else {
+          renderStep(opt.next);
+        }
+      });
+
+      const img = document.createElement("img");
+      img.src = opt.photo;
+      img.alt = opt.alt;
+      img.className = "food-photo";
+
+      const desc = document.createElement("p");
+      desc.className = "food-desc";
+      desc.textContent = opt.desc;
+
+      btn.appendChild(img);
+      item.appendChild(btn);
+      item.appendChild(desc);
+      foodMenu.appendChild(item);
+    });
+  }
+
+  renderStep("food");
+
+  // ---- Table screen (eating/drinking/dessert progress) ----
+  const tableScreen = document.getElementById("tableScreen");
+  const tableFoodImg = document.getElementById("tableFoodImg");
+  const tableDrinkImg = document.getElementById("tableDrinkImg");
+  const tableDessertImg = document.getElementById("tableDessertImg");
+  const finishBtn = document.getElementById("finishBtn");
+
+  const progress = { food: 0, drink: 0, dessert: 0 };
+
+  function showTableScreen() {
+    orderPrompt.hidden = true;
+    foodMenu.hidden = true;
+
+    tableFoodImg.src = selected.food;
+    tableDrinkImg.src = selected.drink;
+    tableDessertImg.src = selected.dessert;
+
+    progress.food = 0;
+    progress.drink = 0;
+    progress.dessert = 0;
+    tableFoodImg.style.opacity = 1;
+    tableDrinkImg.style.opacity = 1;
+    tableDessertImg.style.opacity = 1;
+    finishBtn.hidden = true;
+
+    tableScreen.hidden = false;
+  }
+
+  function eatItem(kind, img) {
+    if (progress[kind] >= 3) return;
+    progress[kind]++;
+    img.style.opacity = 1 - progress[kind] / 3;
+
+    if (progress.food >= 3 && progress.drink >= 3 && progress.dessert >= 3) {
+      finishBtn.hidden = false;
+    }
+  }
+
+  document.getElementById("eatBtn").addEventListener("click", () => {
+    eatItem("food", tableFoodImg);
+  });
+  document.getElementById("drinkBtn").addEventListener("click", () => {
+    eatItem("drink", tableDrinkImg);
+  });
+  document.getElementById("dessertBtn").addEventListener("click", () => {
+    eatItem("dessert", tableDessertImg);
+  });
+
+  // ---- Finished eating → pay or thanks ----
+  const finishedScreen = document.getElementById("finishedScreen");
+
+  finishBtn.addEventListener("click", () => {
+    tableScreen.hidden = true;
+    finishedScreen.hidden = false;
+  });
+
+  // ---- Answer screen (ans1/ans2 → continue to page7) ----
+  const answerScreen = document.getElementById("answerScreen");
+  const answerPhoto = document.getElementById("answerPhoto");
+
+  document.getElementById("payBillBtn").addEventListener("click", () => {
+    finishedScreen.hidden = true;
+    answerPhoto.src = "ans1.jpg";
+    answerScreen.hidden = false;
+  });
+
+  document.getElementById("thanksBtn").addEventListener("click", () => {
+    finishedScreen.hidden = true;
+    answerPhoto.src = "ans2.jpg";
+    answerScreen.hidden = false;
+  });
+
+  document.getElementById("answerContinueBtn").addEventListener("click", () => {
+    window.location.href = "page7.html";
+  });
+</script>
+</body>
+</html>

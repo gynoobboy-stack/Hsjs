@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>my dear past love</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+<div class="sky">
+  <span class="heart h1">❤</span>
+  <span class="heart h2">❤</span>
+  <span class="heart h3">❤</span>
+  <span class="heart h4">❤</span>
+  <span class="heart h5">❤</span>
+  <span class="heart h6">❤</span>
+</div>
+
+<main class="card diary-card">
+
+  <div class="heart-photo-wrap">
+    <img src="photo.jpg" alt="us" class="heart-photo-img">
+  </div>
+
+  <p class="diary-date" id="typedDate"></p>
+
+  <h1 class="diary-greeting" id="typedGreeting"></h1>
+
+  <p class="diary-text" id="typedDiary"></p>
+
+  <div class="diary-btn-wrap" id="diaryBtnWrap">
+    <button id="continueBtn" class="btn btn-yes">continue</button>
+  </div>
+</main>
+
+<script src="music.js"></script>
+<script src="petals.js"></script>
+<script>
+  const dateText = "2083.BHADRA.24 / 2026.SEPTEMBER.9";
+  const greetingText = "My dear past love ♡";
+  const diaryText =
+    "Hey, i♡";
+
+  const typedDate = document.getElementById("typedDate");
+  const typedGreeting = document.getElementById("typedGreeting");
+  const typedDiary = document.getElementById("typedDiary");
+  const diaryBtnWrap = document.getElementById("diaryBtnWrap");
+
+  function typeText(el, text, speed, onDone) {
+    let i = 0;
+    el.classList.add("typing-cursor");
+    const timer = setInterval(() => {
+      el.textContent += text[i];
+      i++;
+      if (i >= text.length) {
+        clearInterval(timer);
+        el.classList.remove("typing-cursor");
+        if (onDone) onDone();
+      }
+    }, speed);
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    typeText(typedDate, dateText, 45, () => {
+      typeText(typedGreeting, greetingText, 60, () => {
+        typeText(typedDiary, diaryText, 30, () => {
+          diaryBtnWrap.classList.add("show");
+        });
+      });
+    });
+  });
+
+  document.getElementById("continueBtn").addEventListener("click", () => {
+    window.location.href = "page3.html";
+  });
+</script>
+</body>
+</html>

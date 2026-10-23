@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Chapter 2</title>
+  <link rel="stylesheet" href="page10.css">
+</head>
+<body class="vn-page">
+  <div id="game" class="game">
+
+    <!-- Background / scene layer (two layers for cross-fading) -->
+    <div class="scene">
+      <div class="bg-layer" id="bg-a"></div>
+      <div class="bg-layer" id="bg-b"></div>
+      <div class="scene-shade"></div>
+    </div>
+
+    <!-- Floating flower particles -->
+    <div id="petals" class="petals" aria-hidden="true"></div>
+
+    <!-- STORY SCREEN -->
+    <section id="story-screen" class="screen">
+      <div class="story-ui">
+        <div id="dialogue-box" class="dialogue-box">
+          <div id="character-name" class="character-name"></div>
+          <p id="dialogue-text" class="dialogue-text"></p>
+        </div>
+
+        <div id="choices" class="choices"></div>
+
+        <button id="continue-btn" class="continue-btn">CONTINUE</button>
+      </div>
+    </section>
+
+    <!-- CHAPTER 1 ENDING SCREEN -->
+    <section id="ending-screen" class="screen">
+      <div class="panel-card ending-card">
+        <h1 id="ending-title" class="ending-title">you ended chapter 1</h1>
+        <button id="next-chapter-btn" class="big-btn small">CONTINUE TO CHAPTER 2</button>
+        <p id="coming-soon" class="coming-soon" aria-live="polite"></p>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="engine.js"></script>
+  <script src="page11.js"></script>
+</body>
+</html>

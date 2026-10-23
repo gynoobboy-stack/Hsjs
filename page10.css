@@ -1,0 +1,374 @@
+/* ===== Base ===== */
+.game {
+  --ink: #fff;
+  --aayush-red: #ff2f3d;
+  --player-pink: #ffb3d4;
+  --you-tag: #f3e9ef;
+  --rose: #ff9ec6;
+  --plum: rgba(24, 10, 30, 0.74);
+  --serif: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+}
+
+.game, .game * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body.vn-page {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: #120912;
+}
+
+.game {
+  font-family: var(--serif);
+  color: var(--ink);
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ===== Background layers ===== */
+.scene { position: absolute; inset: 0; z-index: 0; }
+
+.bg-layer {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+.bg-layer.visible { opacity: 1; }
+.bg-layer.instant { transition: none; }
+
+.scene-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(10, 4, 14, 0.78) 0%, rgba(10, 4, 14, 0.25) 38%, rgba(10, 4, 14, 0) 60%),
+    radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.35) 100%);
+  transition: background 0.8s ease;
+}
+.game.dim .scene-shade { background: rgba(10, 4, 14, 0.68); }
+
+/* ===== Screens ===== */
+.screen {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.6s ease, visibility 0s linear 0.6s;
+}
+.screen.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.6s ease, visibility 0s;
+}
+
+/* ===== Buttons ===== */
+.big-btn {
+  font-family: var(--serif);
+  font-size: clamp(1.5rem, 6vw, 2.4rem);
+  letter-spacing: 0.35em;
+  padding: 0.7em 1.8em 0.7em 2.15em;
+  color: #fff;
+  background: rgba(255, 158, 198, 0.18);
+  border: 2px solid rgba(255, 200, 224, 0.85);
+  border-radius: 999px;
+  cursor: pointer;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 28px rgba(255, 140, 190, 0.45), inset 0 0 18px rgba(255, 200, 224, 0.15);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+.big-btn.small {
+  font-size: clamp(1rem, 4vw, 1.3rem);
+  letter-spacing: 0.25em;
+  padding: 0.75em 1.6em 0.75em 1.85em;
+}
+.big-btn:hover,
+.big-btn:focus-visible {
+  transform: scale(1.05);
+  background: rgba(255, 158, 198, 0.38);
+  box-shadow: 0 0 40px rgba(255, 140, 190, 0.75), inset 0 0 18px rgba(255, 200, 224, 0.25);
+  outline: none;
+}
+.big-btn:active { transform: scale(0.97); }
+
+/* ===== Name entry / ending card ===== */
+.panel-card {
+  width: min(90vw, 440px);
+  padding: 2rem 1.6rem 1.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background: var(--plum);
+  border: 1px solid rgba(255, 190, 220, 0.45);
+  border-radius: 22px;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.55), 0 0 30px rgba(255, 140, 190, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  text-align: center;
+}
+.panel-title {
+  font-size: clamp(1.3rem, 5vw, 1.7rem);
+  letter-spacing: 0.06em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+#name-input {
+  width: 100%;
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 0.75em 1em;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(255, 200, 224, 0.6);
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+#name-input::placeholder { color: rgba(255, 255, 255, 0.45); }
+#name-input:focus {
+  border-color: var(--rose);
+  box-shadow: 0 0 18px rgba(255, 140, 190, 0.5);
+}
+.name-error {
+  min-height: 1.3em;
+  font-size: 0.95rem;
+  color: var(--player-pink);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.name-error.show { opacity: 1; }
+
+.ending-title {
+  font-size: clamp(1.7rem, 7vw, 2.4rem);
+  font-weight: normal;
+  letter-spacing: 0.05em;
+  line-height: 1.3;
+  margin-bottom: 0.6rem;
+  text-shadow: 0 2px 14px rgba(255, 140, 190, 0.6);
+}
+.coming-soon {
+  min-height: 1.4em;
+  font-size: 1rem;
+  color: var(--player-pink);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.coming-soon.show { opacity: 1; }
+
+/* ===== Story UI ===== */
+#story-screen { align-items: flex-end; }
+
+.story-ui {
+  width: 100%;
+  max-width: 880px;
+  padding: 0 clamp(0.6rem, 3vw, 1.4rem) calc(clamp(0.8rem, 3vw, 1.6rem) + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.9rem;
+}
+
+.dialogue-box {
+  position: relative;
+  min-height: 7.5rem;
+  padding: 1.7rem clamp(1rem, 4vw, 1.8rem) 1.2rem;
+  background: var(--plum);
+  border: 1px solid rgba(255, 190, 220, 0.4);
+  border-radius: 18px;
+  box-shadow: 0 8px 36px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(255, 160, 200, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.dialogue-box.angry {
+  background: rgba(125, 12, 24, 0.84);
+  border-color: rgba(255, 120, 120, 0.75);
+  box-shadow: 0 8px 36px rgba(0, 0, 0, 0.55), 0 0 30px rgba(255, 40, 50, 0.4);
+}
+.dialogue-box.show { opacity: 1; transform: translateY(0); }
+.dialogue-box.fade-out { opacity: 0; transform: translateY(6px); }
+
+.character-name {
+  position: absolute;
+  top: -0.95rem;
+  left: clamp(0.8rem, 3vw, 1.4rem);
+  padding: 0.28em 1em;
+  font-size: clamp(1.05rem, 3.6vw, 1.3rem);
+  letter-spacing: 0.04em;
+  background: rgba(20, 8, 26, 0.96);
+  border: 1px solid rgba(255, 190, 220, 0.5);
+  border-radius: 999px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+}
+
+/* Name colors */
+.name-aayush { color: var(--aayush-red); font-weight: bold; }
+.name-player { color: var(--player-pink); font-weight: bold; }
+.name-you { color: var(--you-tag); font-size: 0.82em; margin-left: 0.2em; font-weight: normal; }
+.name-neutral { color: #fff; }
+.name-unknown { color: #ffe14d; font-weight: bold; }
+
+.dialogue-text {
+  font-size: clamp(1.05rem, 3.4vw, 1.4rem);
+  line-height: 1.6;
+  color: #fff; /* dialogue always stays white */
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+  white-space: pre-wrap;
+  min-height: 3.2em;
+}
+
+/* Inner thoughts (dialogue text stays white) */
+.dialogue-text.thought { font-style: italic; }
+.dialogue-text.thought::before { content: "\1F4AD  "; font-style: normal; }
+
+/* Choices */
+.choices {
+  display: none;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.choices.show { display: flex; }
+
+.choice-btn {
+  font-family: var(--serif);
+  font-size: clamp(1rem, 3.4vw, 1.25rem);
+  line-height: 1.4;
+  padding: 0.9em 1.2em;
+  color: #fff;
+  text-align: center;
+  background: rgba(40, 14, 44, 0.8);
+  border: 1.5px solid rgba(255, 190, 220, 0.6);
+  border-radius: 14px;
+  cursor: pointer;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: choiceIn 0.5s ease forwards;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.choice-btn:nth-child(2) { animation-delay: 0.12s; }
+.choice-btn:hover,
+.choice-btn:focus-visible {
+  background: rgba(255, 140, 190, 0.35);
+  border-color: var(--rose);
+  box-shadow: 0 0 24px rgba(255, 140, 190, 0.5);
+  outline: none;
+}
+@keyframes choiceIn { to { opacity: 1; transform: translateY(0); } }
+
+/* Continue button sits directly under the dialogue box */
+.continue-btn {
+  align-self: center;
+  display: none;
+  font-family: var(--serif);
+  font-size: clamp(0.95rem, 3.2vw, 1.1rem);
+  letter-spacing: 0.3em;
+  padding: 0.7em 1.8em 0.7em 2.1em;
+  color: #fff;
+  background: rgba(255, 158, 198, 0.2);
+  border: 1.5px solid rgba(255, 200, 224, 0.8);
+  border-radius: 999px;
+  cursor: pointer;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 20px rgba(255, 140, 190, 0.35);
+  opacity: 0;
+  transition: opacity 0.4s ease, background 0.25s ease, transform 0.2s ease;
+}
+.continue-btn.show { display: inline-block; opacity: 1; }
+.continue-btn:hover,
+.continue-btn:focus-visible {
+  background: rgba(255, 158, 198, 0.4);
+  outline: none;
+}
+.continue-btn:active { transform: scale(0.96); }
+
+/* ===== Floating flower particles ===== */
+.petals {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.petals.on { opacity: 1; }
+
+.petal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+  filter: drop-shadow(0 0 6px rgba(255, 150, 200, 0.6));
+  animation-name: floatPetal;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes floatPetal {
+  0%   { transform: translate3d(0, calc(var(--h, 700px) * 1.08), 0) rotate(0deg); opacity: 0; }
+  10%  { opacity: var(--o); }
+  50%  { transform: translate3d(var(--sway), calc(var(--h, 700px) * 0.5), 0) rotate(180deg); }
+  90%  { opacity: var(--o); }
+  100% { transform: translate3d(calc(var(--sway) * -0.5), calc(var(--h, 700px) * -0.12), 0) rotate(360deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .petal { animation-duration: 40s !important; }
+  .bg-layer, .screen, .dialogue-box { transition-duration: 0.01s; }
+}
+
+/* ===== Always landscape =====
+   If the phone is held upright, rotate the whole game 90deg so it
+   plays as if the phone were horizontal. */
+@media (orientation: portrait) {
+  .game {
+    inset: auto;
+    top: 0;
+    left: 100%;
+    width: 100vh;
+    width: 100dvh;
+    height: 100vw;
+    height: 100dvw;
+    transform-origin: top left;
+    transform: rotate(90deg);
+  }
+}
+
+/* ===== Compact layout (short landscape screens, set by script.js) ===== */
+.game.compact .story-ui { max-width: 780px; gap: 0.45rem; padding-bottom: calc(0.6rem + env(safe-area-inset-bottom, 0px)); }
+.game.compact .dialogue-box { min-height: 4.6rem; padding: 1.3rem 1.2rem 0.7rem; border-radius: 14px; }
+.game.compact .dialogue-text { font-size: 1rem; line-height: 1.45; min-height: 2.4em; }
+.game.compact .character-name { font-size: 1rem; top: -0.85rem; }
+.game.compact .choices { flex-direction: row; gap: 0.6rem; }
+.game.compact .choice-btn { flex: 1; font-size: 0.95rem; padding: 0.65em 0.8em; }
+.game.compact .continue-btn { font-size: 0.9rem; padding: 0.5em 1.5em 0.5em 1.8em; }
+.game.compact .big-btn { font-size: 1.6rem; padding: 0.55em 1.6em 0.55em 1.9em; }
+.game.compact .big-btn.small { font-size: 1rem; padding: 0.6em 1.4em 0.6em 1.7em; }
+.game.compact .panel-card { padding: 1.1rem 1.4rem; gap: 0.6rem; width: min(80%, 420px); }
+.game.compact .panel-title { font-size: 1.25rem; }
+.game.compact #name-input { font-size: 1.05rem; padding: 0.55em 1em; }
+.game.compact .ending-title { font-size: 1.7rem; margin-bottom: 0.2rem; }
+
+/* ===== Page enter / leave fades ===== */
+.game { animation: pageIn 0.8s ease both; }
+@keyframes pageIn { from { opacity: 0; } to { opacity: 1; } }
+.game.leaving { opacity: 0; transition: opacity 0.7s ease; }

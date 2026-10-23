@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>spring memories</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="spring-bg">
+
+<video id="bgMusic" src="spring-music.mp4" loop playsinline hidden></video>
+
+<div class="sky">
+  <span class="heart h1">❤</span>
+  <span class="heart h2">❤</span>
+  <span class="heart h3">❤</span>
+  <span class="heart h4">❤</span>
+  <span class="heart h5">❤</span>
+  <span class="heart h6">❤</span>
+</div>
+
+<main class="card story-card">
+  <div class="photo-frame spring-frame">
+    <img id="springPhoto" src="spring.jpg" alt="spring memory 1" class="comic-photo">
+  </div>
+
+  <div class="caption-chat">
+    <img src="time-popup.jpg" alt="" class="caption-avatar">
+    <div class="chat-bubble caption-bubble">
+      <span id="springCaption">a spring memory, part 1</span>
+    </div>
+  </div>
+
+  <div class="loading-wrap">
+    <div class="loading-track">
+      <div class="loading-fill" id="loadingFill"></div>
+      <div class="loading-icon" id="loadingIcon">🥟</div>
+    </div>
+    <p class="loading-percent" id="loadingPercent">0%</p>
+  </div>
+
+  <div class="hold-wrap">
+    <button id="holdBtn" class="hold-btn heart-hold-btn" aria-label="hold">♡</button>
+  </div>
+
+  <!-- TEMP DEV BUTTON — remove before sending the site to her -->
+  <button id="devSkipBtn" class="dev-skip-btn">⚠ DEV: skip to photo 10</button>
+</main>
+
+<button type="button" class="music-hint" id="musicHint">click here for background music ♡</button>
+
+<script src="spring-fall.js"></script>
+<script>
+  // Dedicated music handling for this page only — always starts from
+  // 0:00 (no cross-page position syncing), loops indefinitely.
+  (function () {
+    const music = document.getElementById("bgMusic");
+    if (!music) return;
+
+    function tryPlay() {
+      music.currentTime = 0;
+      music.play().catch(() => {
+        // Autoplay blocked — will retry on first tap below.
+      });
+    }
+
+    tryPlay();
+    document.addEventListener("click", tryPlay, { once: true });
+
+    const musicHint = document.getElementById("musicHint");
+    if (musicHint) {
+      musicHint.addEventListener("click", () => {
+        musicHint.classList.add("vanish");
+        setTimeout(() => musicHint.remove(), 500);
+      });
+    }
+  })();
+</script>
+<script>
+  const photos = [
+    "spring.jpg",
+    "spring1.jpg",
+    "spring2.jpg",
+    "spring3.jpg",
+    "spring4.jpg",
+    "spring5.jpg",
+    "spring6.jpg",
+    "spring7.jpg",
+    "spring8.jpg",
+    "spring9.jpg",
+  ];
+
+  // Placeholder captions — edit these to whatever you want each photo to say.
+  const captions = [
+    "a spring memory, part 1",
+    "a spring memory, part 2",
+    "a spring memory, part 3",
+    "a spring memory, part 4",
+    "a spring memory, part 5",
+    "a spring memory, part 6",
+    "a spring memory, part 7",
+    "a spring memory, part 8",
+    "a spring memory, part 9",
+    "a spring memory, part 10",
+  ];
+
+  const springPhoto = document.getElementById("springPhoto");
+  const springCaption = document.getElementById("springCaption");
+  const loadingFill = document.getElementById("loadingFill");
+  const loadingIcon = document.getElementById("loadingIcon");
+  const loadingPercent = document.getElementById("loadingPercent");
+  const holdBtn = document.getElementById("holdBtn");
+
+  let index = 0;
+  let holding = false;
+  let percent = 0;
+
+  function loadScreen(i) {
+    springPhoto.src = photos[i];
+    springPhoto.alt = `spring memory ${i + 1}`;
+    springCaption.textContent = captions[i];
+    percent = 0;
+    updateLoadingDisplay();
+
+    if (i > 0) {
+      const hint = document.getElementById("musicHint");
+      if (hint) hint.remove();
+    }
+  }
+
+  function updateLoadingDisplay() {
+    loadingFill.style.width = percent + "%";
+    loadingIcon.style.left = percent + "%";
+    loadingPercent.textContent = Math.round(percent) + "%";
+
+    if (percent >= 100) {
+      index++;
+      if (index < photos.length) {
+        setTimeout(() => loadScreen(index), 400);
+      } else {
+        setTimeout(() => {
+          window.location.href = "page6.html";
+        }, 600);
+      }
+    }
+  }
+
+  function startHold(e) {
+    e.preventDefault();
+    holding = true;
+  }
+  function endHold() {
+    holding = false;
+  }
+
+  holdBtn.addEventListener("mousedown", startHold);
+  holdBtn.addEventListener("touchstart", startHold, { passive: false });
+  holdBtn.addEventListener("mouseup", endHold);
+  holdBtn.addEventListener("mouseleave", endHold);
+  holdBtn.addEventListener("touchend", endHold);
+  holdBtn.addEventListener("touchcancel", endHold);
+
+  setInterval(() => {
+    if (percent >= 100) return;
+    if (holding) {
+      percent = Math.min(100, percent + 1.25);
+    } else {
+      percent = Math.max(0, percent - 1.25);
+    }
+    updateLoadingDisplay();
+  }, 80);
+
+  loadScreen(0);
+
+  // TEMP DEV BUTTON — remove this block along with the button in the
+  // HTML before sending the site out. Jumps straight to the last photo
+  // for quick testing without holding through all 10.
+  document.getElementById("devSkipBtn").addEventListener("click", () => {
+    index = photos.length - 1;
+    loadScreen(index);
+  });
+</script>
+</body>
+</html>

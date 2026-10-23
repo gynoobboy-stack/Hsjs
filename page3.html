@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>lilies for you</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="sky">
+  <span class="heart h1">❤</span>
+  <span class="heart h2">❤</span>
+  <span class="heart h3">❤</span>
+  <span class="heart h4">❤</span>
+  <span class="heart h5">❤</span>
+  <span class="heart h6">❤</span>
+</div>
+
+<main class="card gift-card">
+
+  <div id="giftIntro">
+    <div class="gift-photo-wrap">
+      <img src="cat-flowers.jpg" alt="a cat giving you flowers" class="gift-photo-main">
+      <img src="flower.jpg" alt="a flower" class="gift-photo-corner">
+    </div>
+
+    <h1 class="heading">lilies for you 🌸</h1>
+    <p class="subtext">did you like the lily?</p>
+
+    <div class="buttons show" id="giftButtons">
+      <button id="likeBtn" class="btn btn-yes">of course I like it</button>
+      <button id="nahBtn" class="btn btn-no">nah</button>
+    </div>
+  </div>
+
+  <div id="sadReaction" class="reaction" hidden>
+    <img src="sad-cat.jpg" alt="sad cat" class="reaction-photo pop-sad">
+    <h1 class="heading">it's ok</h1>
+    <button id="continueSad" class="btn btn-yes reaction-continue">continue</button>
+  </div>
+
+  <div id="happyReaction" class="reaction" hidden>
+    <img src="happy-cat.jpg" alt="happy cat" class="reaction-photo pop-happy">
+    <h1 class="heading">I knew you'd like it</h1>
+    <button id="continueHappy" class="btn btn-yes reaction-continue">continue</button>
+  </div>
+
+</main>
+
+<script src="petals.js"></script>
+<script>
+  const giftIntro = document.getElementById("giftIntro");
+  const sadReaction = document.getElementById("sadReaction");
+  const happyReaction = document.getElementById("happyReaction");
+
+  document.getElementById("nahBtn").addEventListener("click", () => {
+    giftIntro.hidden = true;
+    sadReaction.hidden = false;
+  });
+
+  document.getElementById("likeBtn").addEventListener("click", () => {
+    giftIntro.hidden = true;
+    happyReaction.hidden = false;
+  });
+
+  document.getElementById("continueSad").addEventListener("click", () => {
+    window.location.href = "page4.html";
+  });
+
+  document.getElementById("continueHappy").addEventListener("click", () => {
+    window.location.href = "page4.html";
+  });
+</script>
+</body>
+</html>

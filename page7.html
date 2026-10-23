@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>gallery gate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="sky">
+  <span class="heart h1">❤</span>
+  <span class="heart h2">❤</span>
+  <span class="heart h3">❤</span>
+  <span class="heart h4">❤</span>
+  <span class="heart h5">❤</span>
+  <span class="heart h6">❤</span>
+</div>
+
+<main class="card story-card">
+
+  <div class="story-screen" id="screen1">
+    <img src="gallery-intro.jpg" alt="do you wanna see my favorite photos of my gallery" class="comic-photo">
+    <div class="buttons show">
+      <button id="yesBtn" class="btn btn-yes">Yes</button>
+      <button id="noBtn" class="btn btn-no">No</button>
+    </div>
+  </div>
+
+  <div class="story-screen" id="screen2" hidden>
+    <img src="rps-intro.jpg" alt="before getting through this gallery gate you have to play rock paper scissors with me" class="comic-photo">
+    <p class="subtext" id="opponentPickTie"></p>
+    <div class="rps-buttons">
+      <button class="btn btn-no rps-btn" data-choice="rock">✊</button>
+      <button class="btn btn-no rps-btn" data-choice="paper">🖐️</button>
+      <button class="btn btn-no rps-btn" data-choice="scissors">✌️</button>
+    </div>
+    <p class="subtext" id="rpsResultText"></p>
+  </div>
+
+  <div class="story-screen" id="screen3" hidden>
+    <img src="lose.jpg" alt="you lose, try again" class="comic-photo">
+    <p class="subtext" id="opponentPickLose"></p>
+    <button id="tryAgainBtn" class="btn btn-yes rps-followup-btn">I'll beat you next time</button>
+  </div>
+
+  <div class="story-screen" id="screen4" hidden>
+    <img src="win.jpg" alt="you won my queen, you may enter" class="comic-photo">
+    <p class="subtext" id="opponentPickWin"></p>
+    <button id="enterBtn" class="btn btn-yes rps-followup-btn">enter</button>
+  </div>
+
+</main>
+
+<script src="petals.js"></script>
+<script>
+  const screen1 = document.getElementById("screen1");
+  const screen2 = document.getElementById("screen2");
+  const screen3 = document.getElementById("screen3");
+  const screen4 = document.getElementById("screen4");
+
+  // ---- Screen 1: escalating yes/no (same pattern as the first page) ----
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn = document.getElementById("noBtn");
+
+  let noClicks = 0;
+
+  const yesTexts = {
+    1: "(yes)are you sure😑",
+    2: "(yes)please, click yes🥲",
+    3: "(yes)are you sure ?🥺",
+  };
+
+  const growClasses = ["grow-1", "grow-2", "grow-3"];
+
+  noBtn.addEventListener("click", () => {
+    noClicks += 1;
+
+    if (noClicks <= 3) {
+      yesBtn.classList.add(growClasses[noClicks - 1]);
+      yesBtn.textContent = yesTexts[noClicks];
+    }
+
+    if (noClicks === 4) {
+      noBtn.textContent = "yes I wanna see those photos😁";
+      noBtn.classList.remove("btn-no");
+      noBtn.classList.add("btn-yes");
+      noBtn.addEventListener("click", goToRPS);
+    }
+  });
+
+  yesBtn.addEventListener("click", goToRPS);
+
+  function goToRPS() {
+    screen1.hidden = true;
+    screen2.hidden = false;
+    document.getElementById("rpsResultText").textContent = "";
+    document.getElementById("opponentPickTie").textContent = "";
+  }
+
+  // ---- Screen 2: rock paper scissors ----
+  const CHOICES = ["rock", "paper", "scissors"];
+  const BEATS = { rock: "scissors", paper: "rock", scissors: "paper" };
+  const EMOJI = { rock: "✊", paper: "🖐️", scissors: "✌️" };
+  const rpsResultText = document.getElementById("rpsResultText");
+  const opponentPickTie = document.getElementById("opponentPickTie");
+  const opponentPickLose = document.getElementById("opponentPickLose");
+  const opponentPickWin = document.getElementById("opponentPickWin");
+
+  document.querySelectorAll(".rps-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const playerChoice = btn.dataset.choice;
+      const opponentChoice = CHOICES[Math.floor(Math.random() * 3)];
+      const pickLine = `I picked ${EMOJI[opponentChoice]}`;
+
+      if (playerChoice === opponentChoice) {
+        rpsResultText.textContent = "it's a tie — pick again!";
+        opponentPickTie.textContent = pickLine;
+        return;
+      }
+
+      const playerWins = BEATS[playerChoice] === opponentChoice;
+
+      screen2.hidden = true;
+      if (playerWins) {
+        opponentPickWin.textContent = pickLine;
+        screen4.hidden = false;
+      } else {
+        opponentPickLose.textContent = pickLine;
+        screen3.hidden = false;
+      }
+    });
+  });
+
+  // ---- Screen 3: lose → retry ----
+  document.getElementById("tryAgainBtn").addEventListener("click", () => {
+    screen3.hidden = true;
+    screen2.hidden = false;
+    rpsResultText.textContent = "";
+    opponentPickTie.textContent = "";
+  });
+
+  // ---- Screen 4: win → enter ----
+  document.getElementById("enterBtn").addEventListener("click", () => {
+    window.location.href = "page8.html";
+  });
+</script>
+</body>
+</html>

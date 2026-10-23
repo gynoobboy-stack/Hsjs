@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>hello, it's been a while</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- TEMP DEV BUTTON — remove before sending the site out -->
+<button id="devPage7Btn" class="dev-skip-btn dev-skip-fixed">⚠ DEV: go to page7</button>
+
+<audio id="bgMusic" src="song.mp3" loop></audio>
+
+<div class="sky">
+  <span class="heart h1">❤</span>
+  <span class="heart h2">❤</span>
+  <span class="heart h3">❤</span>
+  <span class="heart h4">❤</span>
+  <span class="heart h5">❤</span>
+  <span class="heart h6">❤</span>
+</div>
+
+<div class="envelope-scene" id="envelopeScene">
+  <div class="envelope-emoji" id="envelopeEmoji">💌</div>
+  <p class="envelope-hint">tap to open</p>
+</div>
+
+<main class="card" id="letterCard" hidden>
+  <h1 class="heading" id="typedHeading"></h1>
+  <p class="subtext" id="typedSubtext"></p>
+
+  <div class="buttons" id="buttonsWrap">
+    <button id="yesBtn" class="btn btn-yes">Yes</button>
+    <button id="noBtn" class="btn btn-no">No</button>
+  </div>
+</main>
+
+<script src="music.js"></script>
+<script src="petals.js"></script>
+<script>
+  // --- Envelope open + typewriter reveal ---
+  const envelopeScene = document.getElementById("envelopeScene");
+  const letterCard = document.getElementById("letterCard");
+  const typedHeading = document.getElementById("typedHeading");
+  const typedSubtext = document.getElementById("typedSubtext");
+  const buttonsWrap = document.getElementById("buttonsWrap");
+
+  const headingText = "hello, it's been a while";
+  const subtextText = "do you want to continue?";
+
+  function typeText(el, text, speed, onDone) {
+    let i = 0;
+    el.classList.add("typing-cursor");
+    const timer = setInterval(() => {
+      el.textContent += text[i];
+      i++;
+      if (i >= text.length) {
+        clearInterval(timer);
+        el.classList.remove("typing-cursor");
+        if (onDone) onDone();
+      }
+    }, speed);
+  }
+
+  function openLetter() {
+    envelopeScene.classList.add("opening");
+
+    setTimeout(() => {
+      envelopeScene.classList.add("hide");
+      letterCard.hidden = false;
+      letterCard.classList.add("pop");
+
+      typeText(typedHeading, headingText, 55, () => {
+        typeText(typedSubtext, subtextText, 40, () => {
+          buttonsWrap.classList.add("show");
+        });
+      });
+    }, 500);
+  }
+
+  envelopeScene.addEventListener("click", openLetter, { once: true });
+
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn = document.getElementById("noBtn");
+
+  let noClicks = 0;
+
+  const yesTexts = {
+    1: "Yes",
+    2: "OF COURSE, YES",
+    3: "PLEASE CLICK YES",
+  };
+
+  const growClasses = ["grow-1", "grow-2", "grow-3"];
+
+  noBtn.addEventListener("click", () => {
+    noClicks += 1;
+
+    if (noClicks <= 3) {
+      yesBtn.classList.add(growClasses[noClicks - 1]);
+      yesBtn.textContent = yesTexts[noClicks];
+    }
+
+    if (noClicks === 4) {
+      noBtn.textContent = "yes I'll do it";
+      noBtn.classList.remove("btn-no");
+      noBtn.classList.add("btn-yes");
+      noBtn.addEventListener("click", goToNextPage);
+    }
+  });
+
+  yesBtn.addEventListener("click", goToNextPage);
+
+  function goToNextPage() {
+    window.location.href = "page2.html";
+  }
+
+  // TEMP DEV BUTTON — remove this block along with the button in the
+  // HTML before sending the site out.
+  document.getElementById("devPage7Btn").addEventListener("click", () => {
+    window.location.href = "page7.html";
+  });
+</script>
+</body>
+</html>
